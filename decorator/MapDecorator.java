@@ -2,7 +2,7 @@ package decorator;
 
 import interfaces.Map;
 
-public abstract class MapDecorator implements MapDecorator
+public abstract class MapDecorator implements Map
 {
     private Map delegate;
 
