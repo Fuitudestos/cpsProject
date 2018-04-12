@@ -5,7 +5,6 @@ import decorator.MapDecorator;
 
 public class MapContrat extends MapDecorator
 {
-
     Random rand;
 
     public MapContrat(Map delegate)
