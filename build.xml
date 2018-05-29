@@ -1,0 +1,55 @@
+<project name = "ProjetCPS" default = "compile" basedir = ".">
+    <description>
+       Projet CPS réalisé par Paul Charton (3771834)
+    </description>
+
+  <!-- METTRE ICI LE NOM DU BINOME -->
+    <property name="nom1" value="PaulCharton"/>
+
+    <path id="classpath.test">
+        <pathelement location="junit-4.10.jar"/>
+    </path>
+
+    <target name="init">
+    <!-- Create the time stamp -->
+        <tstamp/>
+        <mkdir dir="build/classes"/>
+        <mkdir dir="build/jar"/>
+    </target>
+
+    <target name="compile" depends="init" description="compile the source ">
+    <!-- Compile the java code from ${src} into ${build} -->
+        <javac debug="true" srcdir="src" excludes="" destdir="build/classes" includeantruntime="false">
+            <classpath refid="classpath.test"/>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile">
+        <jar destfile="build/jar/DM.jar" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class" value="test.Test"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="jar" description="run application in release mode">
+        <echo>================ Run Object Main ================</echo>
+        <java jar="build/jar/DM.jar" fork="true"/>
+    </target>
+
+    <target name="dist" depends="init,clean" description="Generer la distribution">
+    <!-- tout mettre dans l'archive -->
+        <jar basedir=".." jarfile="../Projet_CPS-${nom1}-${DSTAMP}.jar" includes="Projet_CPS/**/*" excludes="**/CVS"/>
+    </target>
+
+    <target name="clean" description="clean up">
+        <echo>================ Removing temporary files... ================</echo>
+        <delete verbose="true"> <!-- Remove all *~ files -->
+            <fileset dir="${basedir}" defaultexcludes="no">
+                <include name="**/*~"/>
+            </fileset>
+        </delete>
+        <echo>================ Removing build directory ================</echo>
+    <delete dir="build"/>
+    </target>
+</project>

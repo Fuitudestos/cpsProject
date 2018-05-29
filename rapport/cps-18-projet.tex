@@ -1,0 +1,427 @@
+\documentclass{article}
+\RequirePackage{dar}
+%\RequirePackage[enseignants]{pc2r}
+\usepackage{graphicx}
+\lstset{language=c}
+\usepackage{fullpage,url}
+\usepackage[all]{xy}
+
+\lstset{ basicstyle=\ttfamily\small, inputencoding=latin1, upquote=false,
+  language=C, keywordstyle=\bfseries,
+  identifierstyle=, % nothing happens
+  commentstyle=\it\ttfamily, stringstyle=\ttfamily,
+  showstringspaces=false %showstringspaces=true
+}
+
+\def\C{\lstset{language=C++}}
+\def\JAVA{\lstset{language=Java}}
+\def\OCAML{\lstset{language=[Objective]Caml}}
+
+\renewcommand*{\ttdefault}{txtt}
+\begin{document}
+
+\authors{}
+\titre{Sujet Devoir CPS : \emph{Dungeon Master}}
+
+\entete{}
+
+\section*{Projet}
+
+Le but du projet est de donner une spécification d'un jeu similaire à
+\emph{Dungeon Master} dont le cahier des charges est partiellement
+décrit dans le sujet d'Examen Réparti 1, d'implémenter cette
+spécification selon la méthode \emph{Design-by-Contract} vue en cours,
+et d'écrire une implémentation pour le jeu.
+
+\noindent Le but du projet est de proposer des défis de spécification
+et d'implémentation de contrats. L'implémentation du jeu a une
+importance moindre. Toute fonctionnalité implémentée mais non
+spécifiée a de fortes chances d'être négligée dans l'évaluation.
+
+\noindent Le but du projet n'est pas de se rapprocher au maximum de
+jeux existants. Les initiatives personnelles et originales sont
+encouragées.
+
+\section*{Rendu}
+
+Le rendu est composé d'une unique archive contenant:
+\begin{itemize}
+\item la spécification semi-formelle des services utilisés par le
+  projet sous forme d'interface \textbf{Java} (e.g. une interface
+  \texttt{Player}),
+\item l'implémentation de spécification par des contrats selon le
+  motif \emph{ecorator} vu en cours (e.g. deux classes
+  \texttt{PlayerDecorator} et \texttt{PlayerContract}),
+\item (au moins) deux implémentations des services spécifiés, une
+  implémentation correcte et une implémentation buggée (e.g. deux
+  classes \texttt{PlayerImpl} et \texttt{PLayerBugImpl}).
+\item une série de test \textbf{JUnit} pertinents, élaborés selon la
+  méthode MBT.
+\item un fichier \texttt{build.xml} permettant la compilation,
+  l'execution et le test des implémentations.
+\item un rapport en \texttt{pdf}.
+\end{itemize}
+
+\section*{Etape 1: Compléter l'examen}
+
+La spécification et l'implémentation des services donnée dans les cinq
+exercices de l'examen doivent être entièrement terminée dans le projet.
+
+\section*{Etape 2: Fonctionnalités imposées}
+
+Les fonctionnalités suivantes doivent être présentes pour que le
+projet obtienne une évaluation correcte:
+\begin{itemize}
+\item \textbf{Jeu}: Le programme du jeu doit intégrer un éditeur, et
+  permettre le lancement d'une partie et l'intialisation d'un moteur
+  de jeu, qui vérifie des conditions de victoire et de défaite.
+\item \textbf{Monstres et Combat}: Le jeu doit contenir des monstres
+  qui peuvent suivre et attaquer le joueur quand ils se trouvent à
+  proximité de lui. Le joueur doit pouvoir effectuer une action de
+  combat contre un monstre devant lui. Le moteur doit maintenir la
+  cohérence du combat (supprimer un monstre quand ses points de vie
+  sont négatifs ou nuls).
+\item \textbf{Trésor}: La grille doit contenir un trésor accessible
+  dans une pièce accessible depuis l'entrée. Le but pour le joueur est
+  de ramasser le trésor puis de trouver la sortie.
+\item \textbf{Affichage et Interface}: Cette fonctionnalité est la
+  seule pour laquelle il n'est pas demandé de
+  spécification. L'affichage peut être à la première personne
+  (préférentiellement): la nature et le contenu des cases visibles
+  parmi les neuf cases devant le joueur est représentée à
+  l'écran. Alternativement, si le projet est ambitieux sur d'autres
+  points, l'affichage peut se faire en vue du dessus (en représentant
+  les 15 cases proches du joueur), y compris en ASCII. Les commandes
+  de l'interface peuvent être entrées au clavier ou en cliquant sur
+  des boutons (l'une ou l'autre méthode, ou les deux).
+\item \textbf{Gestion des grilles} Le joueur doit pouvoir charger une
+  grille existante ou éditer une grille à l'aide d'une interface
+  simple. Le jeu est capable de vérifier qu'une grille est
+  licite. Deplus, le jeu doit intégrer des fonctions basiques de
+  génération aléatoire de grilles.
+\end{itemize}
+
+\section*{Etape 3: Extensions possibles}
+
+Pour obtenir l'évaluation maximale, le projet doit en plus spécifier
+et implémenter plusieurs extensions parmi les suivantes\footnote{Les
+  extensions issues d'idées originales, ou de jeux vidéo existants
+  sont bien sûr encouragées.}:
+\begin{itemize}
+\item \textbf{Clefs}: Certaines portes peuvent être verrouillées et
+  nécessitent de trouver la bonne clef pour être ouverte.
+\item \textbf{Butin}: Le joueur peut trouver du butin (au sol ou en
+  triomphant des montres) qui améliorent ses statistiques de combat, ou
+  augmentent un éventuel score final.
+\item \textbf{Combat amélioré}: Le joueur peut utiliser différents
+  types d'attaques, d'armes, de sortilèges et de protection pour se
+  battre contre des monstres variés, disposant de compétences
+  spéciales (faire passer son tour au joueur, le forcer à reculer,
+  $\dots$)
+\item \textbf{Enigme}: Le joueur doit résoudre des énigmes à base de
+  leviers, interrupteurs, pièges pour parvenir à la sortie ou au trésor.
+\item \textbf{Survie}: Le joueur doit collecter de la nourriture,
+  s'alimenter et dormir (à l'abri de tout monstre) régulièrement.
+\item \textbf{Lumière}: Le champ de perception du joueur dépend de la
+  force de la source de lumière qu'il porte (torch, lanterne) et des
+  sources de lumière présentes sur la grille.
+\item \textbf{Multijoueur}: Plusieurs joueurs peuvent jouer en même
+  temps, en se partageant l'écran.
+\item \textbf{Génération améliorée}: Le jeu intègre une génération
+  automatique de niveau selon des paramètres de difficulté, et peut
+  générer des "donjons" composés de plusieurs grilles (la sortie de la
+  grille précédente amène à l'entrée de la grille suivante).
+\end{itemize}
+
+\section*{Rapport}
+
+Le rapport se compose de 3 parties:
+\begin{enumerate}
+\item Un manuel d'utilisation succint de l'implémentation.
+\item La spécification formelle complète du projet.
+\item Un rapport de projet proprement dit, se concentrant sur les
+  choix et les difficultés de spécification, d'implémentation, de
+  tests, exhibant des exemples choisis pour leur pertinence.
+\end{enumerate}
+
+\section*{Soutenance}
+
+Une soutenance de 15 minutes se compose d'environ:
+\begin{enumerate}
+\item 10 minutes de rapport: présentation (rapide) du projet, puis
+  exploration de différents cas de spécification, contrats ou tests
+  pertinents.
+\item 5 minutes de démonstration.
+\end{enumerate}
+
+Le contenu de la soutenance doit se concentrer sur quelques points
+précis de spécifications ou de tests. Il est conseillé à chaque groupe
+de trouver des aspects originaux et spécifiques à présenter et de ne
+pas chercher à couvrir l'intégralité du projet.
+
+\newpage
+
+\appendix
+
+\section*{Spécifications}
+
+Les spécifications présentées ici sont des suggestions, qui peuvent
+servir de base au projet. Il n'y a pas une unique "correction" du partiel.
+
+En outre, ces spécifications peuvent contenir des erreurs ou des
+imprécisions\footnote{Dans ce cas, écrire rapidement aux encadrants.}.
+
+\begin{tabular}{rl}
+\textbf{type} & \textrm{Cell} \{\textbf{IN}, \textbf{OUT}, \textbf{EMP}, \textbf{WLL}, \textbf{DNO}, \textbf{DNC}, \textbf{DWO}, \textbf{DWC} \} \\
+\textbf{type} & \textrm{Dir} \{\textbf{N}, \textbf{S}, \textbf{W}, \textbf{E} \} \\
+\textbf{type} & \textrm{Command} \{\textbf{FF}, \textbf{BB}, \textbf{RR}, \textbf{LL}, \textbf{TL}, \textbf{TR} \} \\
+\textbf{type} & \textrm{Option[T]} \{\textbf{No}, \textbf{So}(T) \} \\
+& \\
+\textbf{type} & \textrm{Set[T]}  \\
+\textbf{type} & \textrm{Array[T1,...,TN]}  \\
+\end{tabular}
+
+\vspace{5mm}\hrule\vspace{5mm}
+
+\begin{tabular}{rl}
+\textbf{Service}: & \textrm{Map}  \\
+\textbf{Types}: & \textrm{bool}, \textrm{int}, \textrm{Cell}  \\
+\textbf{Observators}: & \textbf{const}~\texttt{Height}: \textrm{[Map]} $\rightarrow$ \textrm{int} \\
+& \textbf{const}~\texttt{Width}: \textrm{[Map]} $\rightarrow$ \textrm{int} \\
+& \texttt{CellNature}: \textrm{[Mat]} $\times$ \textrm{int} $\times$ \textrm{int} $\rightarrow$ \textrm{Cell} \\
+& \quad\quad \textbf{pre}~\texttt{CellNature(M,x,y)}~\textbf{requires}~ $0 \leq$ x $<$ \texttt{Width(M)}  ~\textbf{and}~ $0 \leq$ y $<$ \texttt{Height(M)} \\
+\textbf{Constructors}: & \texttt{init}: \textrm{int} $\times$ \textrm{int} $\rightarrow$ \textrm{[Map]} \\
+& \quad\quad \textbf{pre}~\texttt{init(w,h)}~\textbf{requires}~ $0 <$ w  ~\textbf{and}~ $0 <$ h  \\
+\textbf{Operators}: & \texttt{OpenDoor}: \textrm{[Map]} $\times$ \textrm{int} $\times$ \textrm{int}  $\rightarrow$ \textrm{[Map]} \\
+& \quad\quad \textbf{pre}~\texttt{OpenDoor(M,x,y)}~\textbf{requires}~\texttt{CellNature(M,x,y)} $\in$ \{\textbf{DNC}, \textbf{DWC} \}  \\
+& \texttt{CloseDoor}: \textrm{[Map]} $\times$ \textrm{int} $\times$ \textrm{int}  $\rightarrow$ \textrm{[Map]} \\
+& \quad\quad \textbf{pre}~\texttt{CloseDoor(M,x,y)}~\textbf{requires}~\texttt{CellNature(M,x,y)} $\in$ \{\textbf{DNO}, \textbf{DWO} \}  \\
+       \textbf{Observation}: \\
+       $[$invariant$]$: & $\top$ \\
+       $[$init$]$: & \texttt{Height(init(h,w))} = \texttt{h} \\
+       & \texttt{Width(init(h,w))} = \texttt{w} \\
+       $[$OpenDoor$]$: & \texttt{CellNature(M,x,y)} = \textbf{DWC} \textbf{implies} \texttt{CellNature(OpenDoor(M,x,y),x,y)} = \textbf{DWO} \\
+       & \texttt{CellNature(M,x,y)} = \textbf{DNC} \textbf{implies} \texttt{CellNature(OpenDoor(M,x,y),x,y)} = \textbf{DNO} \\
+       & \textbf{forall}~u $\in$ [0; \texttt{Width(M)}-1]~\textbf{forall}~v $\in$ [0; \texttt{Height(M)}-1]~(u $\neq$ x \textbf{or} v $\neq$ y) \\ & \quad\quad\quad\quad \textbf{implies} \texttt{CellNature(OpenDoor(M,x,y),u,v)} = \texttt{CellNature(M,u,v)}\\
+$[$CloseDoor$]$       & $\dots$ \\
+       & similaire pour \texttt{CloseDoor} \\
+       & $\dots$ \\
+\end{tabular}
+
+\vspace{5mm}\hrule\vspace{5mm}
+
+\begin{tabular}{rl}
+\textbf{Service}: & \textrm{EditMap}~\textbf{refines}~\textrm{Map}  \\
+\textbf{Types}: & \textrm{bool}, \textrm{int}, \textrm{Cell}  \\
+\textbf{Observators}: & \texttt{isReachable}: \textrm{[EditMap]} $\times$ \textrm{int} $\times$ \textrm{int} $\times$ \textrm{int} $\times$ \textrm{int} $\rightarrow$ \textrm{bool} \\
+& \quad\quad \textbf{pre}~\texttt{isReachable(M,x1,y1,x2,y2)}~\textbf{requires}~ \texttt{CellNature(M,x1,y1)} $\neq$ \textbf{WLL} \\ & \quad\quad\quad\quad \textbf{and} \texttt{CellNature(M,x2,y2)} $\neq$ \textbf{WLL}  \\
+& \texttt{isReady}: \textrm{[EditMap]} $\rightarrow$ \textrm{bool} \\
+\textbf{Constructors}: & $\emptyset$\\
+\textbf{Operators}: & \texttt{SetNature}: \textrm{[EditMap]} $\times$ \textrm{int} $\times$ \textrm{int} $\times$ Cell $\rightarrow$ \textrm{[EditMap]} \\
+& \quad\quad \textbf{pre}~\texttt{SetNature(M,x,y)}~\textbf{requires}~$0 \leq$ x $<$ \texttt{Width(M)}  ~\textbf{and}~ $0 \leq$ y $<$ \texttt{Height(M)} \\
+\textbf{Observation}: \\
+$[$invariant$]$: & \texttt{isReachable(M,x1,y1,x2,y2)} = \textbf{exists} P \textbf{in} \textrm{Array}$[$\textrm{int},\textrm{int}$]$, P[0] = (x1,y1) \textbf{and} P[size(P)-1] = (x2,y2) \\ & \quad\quad\quad\quad \textbf{and} \textbf{forall} i \textbf{in} [1;size(P)-1], (P[i-1]=(u,v) \textbf{and} P[i]=(s,t)) \textbf{implies} $($u$-$s$)^2 + ($v$-$t$)^2$ = 1
+\\ & \quad\quad\quad\quad \textbf{and} \textbf{forall} i \textbf{in} [1;size(P)-2], P[i-1]=(u,v) \textbf{implies} \texttt{CellNature(M,u,v)} $\neq$ \textbf{WLL} \\
+& \texttt{isReady(M)} = \textbf{exists} xi,yi,xo,yo \textbf{in} \textrm{int}$^4$,\\
+& \quad\quad\quad\quad\quad\quad\quad\quad \texttt{CellNature(M,xi,yi)} = \textbf{IN} \textbf{and} \texttt{CellNature(M,xi,yi)} = \textbf{OUT} \\
+& \quad\quad\quad\quad\quad\quad\quad\quad \textbf{and} \texttt{isReachable(M,xi,yi,xo,yo)} \\
+& \quad\quad\quad\quad\quad\quad\quad\quad \textbf{and} \textbf{forall} x,y \textbf{in} \textrm{int}$^2$, x $\neq$ xi \textbf{or} y $\neq$ yi \textbf{implies} \texttt{CellNature(M,x,y)} $\neq$ \textbf{IN} \\
+& \quad\quad\quad\quad\quad\quad\quad\quad \textbf{and} \textbf{forall} x,y \textbf{in} \textrm{int}$^2$, x $\neq$ xo \textbf{or} y $\neq$ yo \textbf{implies} \texttt{CellNature(M,x,y)} $\neq$ \textbf{OUT} \\
+& \quad\quad\quad\quad \textbf{forall} x,y \textbf{in} \textrm{int}, \texttt{CellNature(M,x,y)} $\in$ \{ \textbf{DNO}, \textbf{DNC}\} \textbf{implies}  \\ & \quad\quad\quad\quad\quad\quad\quad\quad \texttt{CellNature(M,x+1,y)} = \texttt{CellNature(M,x-1,y)} = \textbf{EMP} \textbf{and} \\ & \quad\quad\quad\quad\quad\quad\quad\quad \texttt{CellNature(M,x,y-1)} = \texttt{CellNature(M,x,y+1)} = \textbf{WLL} \\
+& \quad\quad\quad\quad \textbf{forall} x,y \textbf{in} \textrm{int}, \texttt{CellNature(M,x,y)} $\in$ \{ \textbf{DWO}, \textbf{DWC}\} \textbf{implies}  \\ & \quad\quad\quad\quad\quad\quad\quad\quad \texttt{CellNature(M,x+1,y)} = \texttt{CellNature(M,x-1,y)} = \textbf{WLL} \textbf{and} \\ & \quad\quad\quad\quad\quad\quad\quad\quad \texttt{CellNature(M,x,y-1)} = \texttt{CellNature(M,x,y+1)} = \textbf{EMP} \\
+$[$SetNature$]$: & \texttt{CellNature(SetNature(M,x,y,Na),x,y)} = \texttt{Na} \\
+& \textbf{forall} u,v \textbf{in} \textrm{int}$^2$, u $\neq$ x \textbf{or} v $\neq$ y \textbf{implies} \texttt{CellNature(SetNature(M,x,y),u,v)} = \texttt{CellNature(M,u,v)}
+
+\end{tabular}
+
+\vspace{5mm}\hrule\vspace{5mm}
+
+\begin{tabular}{rl}
+\textbf{Service}: & Environment \textbf{includes} Map \\
+\textbf{Types}: & \textrm{bool}, \textrm{int}, \textrm{Cell}, \textrm{Mob} \\
+\textbf{Observators} : & \texttt{CellContent}: \textrm{int} $\times$ \textrm{int} $\rightarrow$ \textrm{Option[Mob]} \\
+\textbf{Operators}: &  \texttt{CloseDoor}: \textrm{[Environment]} $\times$ \textrm{int} $\times$ \textrm{int}  $\rightarrow$ \textrm{[Environment]} \\
+& \quad\quad \textbf{pre}~\texttt{CloseDoor(M,x,y)}~\textbf{requires}~\texttt{CellContent(M,x,y)} = \textbf{No} \\
+\end{tabular}
+
+\vspace{5mm}\hrule\vspace{5mm}
+
+\begin{tabular}{rl}
+\textbf{Service}: & Mob  \\
+\textbf{Types}: & \textrm{bool}, \textrm{int}, \textrm{Cell} \\
+\textbf{Observators} : & \texttt{Env}: \textrm{[Mob]}  $\rightarrow$ \textrm{Environment} \\
+& \texttt{Col}: \textrm{[Mob]}  $\rightarrow$ \textrm{int} \\
+& \texttt{Row}: \textrm{[Mob]}  $\rightarrow$ \textrm{int} \\
+& \texttt{Face}: \textrm{[Mob]} $\rightarrow$ \textrm{Dir} \\
+\textbf{Constructors}: & \texttt{init}: \textrm{Environment} $\times$ \textrm{int} $\times$ \textrm{int} $\times$ \textrm{Dir} $\rightarrow$ \textrm{[Mob]} \\
+& \textbf{pre} \texttt{init(E,x,y,D)} \textbf{requires} $0 \leq$ \texttt{x} $<$ \texttt{Environment::Width(E)} \\
+& \quad\quad\quad\quad \textbf{and} $0 \leq$ \texttt{y} $<$ \texttt{Environment::Height(E)} \\
+\textbf{Operators}: &  \texttt{Forward}: \textrm{[Mob]} $\rightarrow$ \textrm{[Mob]} \\
+&  \texttt{Backward}: \textrm{[Mob]} $\rightarrow$ \textrm{[Mob]} \\
+&  \texttt{TurnL}: \textrm{[Mob]} $\rightarrow$ \textrm{[Mob]} \\
+&  \texttt{TurnR}: \textrm{[Mob]} $\rightarrow$ \textrm{[Mob]} \\
+&  \texttt{StrafeL}: \textrm{[Mob]} $\rightarrow$ \textrm{[Mob]} \\
+&  \texttt{StrafeR}: \textrm{[Mob]} $\rightarrow$ \textrm{[Mob]} \\
+$[$invariant$]$ : & $0 \leq$ \texttt{Col(M)} $<$ \texttt{Environment::Width(Envi(M))} \\
+& $0 \leq$ \texttt{Row(M)} $<$ \texttt{Environment::Height(Envi(M))} \\
+& Environment::CellNature(Envi(M),Col(M),Row(M)) $\notin$ \{\textbf{WLL}, \textbf{DNC},  \textbf{DWC}\} \\
+$[$init$]$ : & \texttt{Col(init(E,x,y,D))} = \texttt{x} \\
+& \texttt{Row(init(E,x,y,D))} = \texttt{y} \\
+& \texttt{Face(init(E,x,y,D))} = \texttt{D} \\
+& \texttt{Envi(init(E,x,y,D))} = \texttt{E} \\
+\end{tabular}
+
+On ne donne qu'une version partielle des postconditions (à compléter de manière systématique).
+
+\begin{tabular}{rl}
+$[$Forward$]$: & \texttt{Face(M)}=\textbf{N} \textbf{implies} \\
+& \quad\quad\quad\quad \texttt{Environment::CellNature(Envi(M),Col(M),Row(M)+1)} $\in$ \{\textbf{EMP}, \textbf{DWO}\} \\
+& \quad\quad\quad\quad \textbf{and} \texttt{Row(M)+1} $<$ \texttt{Environment::Width(Envi(M))} \\
+& \quad\quad\quad\quad \textbf{and} \texttt{Environment::CellContent(Envi(M),Col(M),Row(M)+1)} = \textbf{No} \\
+& \quad\quad\quad\quad \textbf{implies} \texttt{Row(Forward(M))} = \texttt{Row(M) + 1} \\
+& \quad\quad\quad\quad \textbf{and} \texttt{Col(Forward(M))} = \texttt{Col(M)} \\
+& \texttt{Face(M)}=\textbf{N} \textbf{implies} \\
+& \quad\quad\quad\quad \texttt{Environment::CellNature(Envi(M),Col(M),Row(M)+1)} $\notin$ \{\textbf{EMP}, \textbf{DWO}\} \\
+& \quad\quad\quad\quad \textbf{or} \texttt{Row(M)+1} $\geq$ \texttt{Environment::Width(Envi(M))} \\
+& \quad\quad\quad\quad \textbf{or} \texttt{Environment::CellContent(Envi(M),Col(M),Row(M)+1)} $\neq$ \textbf{No} \\
+& \quad\quad\quad\quad \textbf{implies} \texttt{Row(Forward(M))} = \texttt{Row(M)} \\
+& \quad\quad\quad\quad \textbf{and} \texttt{Col(Forward(M))} = \texttt{Col(M)} \\
+& \texttt{Face(M)}=\textbf{E} \textbf{implies} \\
+& \quad\quad\quad\quad \texttt{Environment::CellNature(Envi(M),Col(M)+1,Row(M))} $\in$ \{\textbf{EMP}, \textbf{DNO}\} \\
+& \quad\quad\quad\quad \textbf{and} \texttt{Col(M)+1} $<$ \texttt{Environment::Height(Envi(M))} \\
+& \quad\quad\quad\quad \textbf{and} \texttt{Environment::CellContent(Envi(M),Col(M)+1,Row(M))} = \textbf{No} \\
+& \quad\quad\quad\quad \textbf{implies} \texttt{Row(Forward(M))} = \texttt{Row(M)} \\
+& \quad\quad\quad\quad \textbf{and} \texttt{Col(Forward(M))} = \texttt{Col(M) + 1} \\
+& \texttt{Face(M)}=\textbf{E} \textbf{implies} \\
+& \quad\quad\quad\quad \texttt{Environment::CellNature(Envi(M),Col(M)+1,Row(M))} $\notin$ \{\textbf{EMP}, \textbf{DWO}\} \\
+& \quad\quad\quad\quad \textbf{or} \texttt{Row(M)} $\geq$ \texttt{Environment::Width(Envi(M))} \\
+& \quad\quad\quad\quad \textbf{or} \texttt{Environment::CellContent(Envi(M),Col(M)+1,Row(M))} $\neq$ \textbf{No} \\
+& \quad\quad\quad\quad \textbf{implies} \texttt{Row(Forward(M))} = \texttt{Row(M)} \\
+& \quad\quad\quad\quad \textbf{and} \texttt{Col(Forward(M))} = \texttt{Col(M)} \\
+& \texttt{Face(M)}=\textbf{S} \textbf{implies} \\
+& \quad\quad\quad\quad \texttt{Environment::CellNature(Envi(M),Col(M),Row(M)-1)} $\in$ \{\textbf{EMP}, \textbf{DWO}\} \\
+& \quad\quad\quad\quad \textbf{and} \texttt{Col(M)-1} $\geq$ 0 \\
+& \quad\quad\quad\quad \textbf{and} \texttt{Environment::CellContent(Envi(M),Col(M),Row(M)+1)} = \textbf{No} \\
+& \quad\quad\quad\quad \textbf{implies} \texttt{Row(Forward(M))} = \texttt{Row(M) - 1} \\
+& \quad\quad\quad\quad \textbf{and} \texttt{Col(Forward(M))} = \texttt{Col(M)} \\
+& \texttt{Face(M)}=\textbf{S} \textbf{implies} \\
+& \quad\quad\quad\quad \texttt{Environment::CellNature(Envi(M),Col(M),Row(M)-1)} $\notin$ \{\textbf{EMP}, \textbf{DWO}\} \\
+& \quad\quad\quad\quad \textbf{or} \texttt{Col(M)-1} $<$ 0 \\
+& \quad\quad\quad\quad \textbf{or} \texttt{Environment::CellContent(Envi(M),Col(M),Row(M)-1)} $\neq$ \textbf{No} \\
+& \quad\quad\quad\quad \textbf{implies} \texttt{Row(Forward(M))} = \texttt{Row(M)} \\
+& \quad\quad\quad\quad \textbf{and} \texttt{Col(Forward(M))} = \texttt{Col(M)} \\
+& \texttt{Face(M)}=\textbf{W} \textbf{implies} \\
+& \quad\quad\quad\quad \texttt{Environment::CellNature(Envi(M),Col(M)-1,Row(M))} $\in$ \{\textbf{EMP}, \textbf{DNO}\} \\
+& \quad\quad\quad\quad \textbf{and} \texttt{Row(M)-1} $\geq$ 0 \\
+& \quad\quad\quad\quad \textbf{and} \texttt{Environment::CellContent(Envi(M),Col(M)-1,Row(M))} = \textbf{No} \\
+& \quad\quad\quad\quad \textbf{implies} \texttt{Row(Forward(M))} = \texttt{Row(M)} \\
+& \quad\quad\quad\quad \textbf{and} \texttt{Col(Forward(M))} = \texttt{Col(M) - 1} \\
+& \texttt{Face(M)}=\textbf{W} \textbf{implies} \\
+& \quad\quad\quad\quad \texttt{Environment::CellNature(Envi(M),Col(M)-1,Row(M))} $\notin$ \{\textbf{EMP}, \textbf{DNO}\} \\
+& \quad\quad\quad\quad \textbf{or} \texttt{Row(M)-1} $<$ 0 \\
+& \quad\quad\quad\quad \textbf{or} \texttt{Environment::CellContent(Envi(M),Col(M),Row(M)-1)} $\neq$ \textbf{No} \\
+& \quad\quad\quad\quad \textbf{implies} \texttt{Row(Forward(M))} = \texttt{Row(M)} \\
+& \quad\quad\quad\quad \textbf{and} \texttt{Col(Forward(M))} = \texttt{Col(M)} \\
+$[$TurnLeft$]$: & \texttt{Face(M)}=\textbf{N} \textbf{implies} \texttt{Face(TurnLeft(M))}=\textbf{W} \\
+& \texttt{Face(M)}=\textbf{W} \textbf{implies} \texttt{Face(TurnLeft(M))}=\textbf{S} \\
+& \texttt{Face(M)}=\textbf{S} \textbf{implies} \texttt{Face(TurnLeft(M))}=\textbf{E} \\
+& \texttt{Face(M)}=\textbf{E} \textbf{implies} \texttt{Face(TurnLeft(M))}=\textbf{N} \\
+$[\dots]$: & les autres opérateurs ont des post-conditions similaires.
+\end{tabular}
+
+\vspace{5mm}\hrule\vspace{5mm}
+
+\begin{tabular}{rl}
+\textbf{Service}: & Entity \textbf{includes} Mob \\
+\textbf{Observator}: & \texttt{Hp}: \textrm{[Entity]} $\rightarrow$ \textrm{int} \\
+\textbf{Constructor}: & \texttt{init}: \textrm{Environment} $\times$ \textrm{int} $\times$ \textrm{int} $\times$ \textrm{Dir} $\times$ \textrm{int} $\rightarrow$ \textrm{[Entity]} \\
+& \quad\quad\quad\quad\textbf{pre} \texttt{init(E,x,y,D,h)} \textbf{requires} h $>$ 0 \\
+\textbf{Operator}: & \texttt{step}: \textrm{[Entity]} $\rightarrow$ \textrm{[Entity]} \\
+\textbf{Observations} & \\
+$[$init$]$: & \texttt{Hp(init(E,x,y,D,h))} = \texttt{h}
+\end{tabular}
+
+\vspace{5mm}\hrule\vspace{5mm}
+
+\begin{tabular}{rl}
+\textbf{Service}: & Cow \textbf{includes} Entity \\
+\textbf{Constructor}: & \texttt{init}: \textrm{Environment} $\times$ \textrm{int} $\times$ \textrm{int} $\times$ \textrm{Dir} $\times$ \textrm{int} $\rightarrow$ \textrm{[Entity]} \\
+& \quad\quad\quad\quad\textbf{pre} \texttt{init(E,x,y,D,h)} \textbf{requires} 4 $\geq$ h $\geq$ 3 \\
+\textbf{Observations} & \\
+$[$step$]$: & \texttt{Col(M) - 1} $\leq$ \texttt{Col(step(M))} $\leq$ \texttt{Col(M) + 1} \\
+& \texttt{Row(M) - 1} $\leq$ \texttt{Row(step(M))} $\leq$ \texttt{Row(M) + 1} \\
+\end{tabular}
+
+\vspace{5mm}\hrule\vspace{5mm}
+
+\begin{tabular}{rl}
+\textbf{Service}: & Player \textbf{includes} Entity \\
+\textbf{Observator}: & \texttt{LastCom}: \textrm{[Player]} $\rightarrow$ \textrm{Option[Command]} \\
+& \texttt{Content}: \textrm{[Player]} $\times$ \textrm{int} $\times$ \textrm{int} $\rightarrow$ \textrm{Option[Mob]} \\
+& \quad\quad\quad\quad\textbf{pre} \texttt{Content(P,x,y)} \textbf{requires} x $\in$ \{-1,0,1\}\textbf{and} y $\in$ \{-1,+3\}\\
+& \texttt{Nature}: \textrm{[Player]} $\times$ \textrm{int} $\times$ \textrm{int} $\rightarrow$ \textrm{Cell} \\
+& \quad\quad\quad\quad\textbf{pre} \texttt{Nature(P,x,y)} \textbf{requires} x $\in$ \{-1,0,1\}\textbf{and} y $\in$ \{-1,+3\}\\
+& \texttt{Viewable}: \textrm{[Player]} $\times$ \textrm{int} $\times$ \textrm{int} $\rightarrow$ \textrm{Cell} \\
+& \quad\quad\quad\quad\textbf{pre} \texttt{Nature(P,x,y)} \textbf{requires} x $\in$ \{-1,0,1\}\textbf{and} y $\in$ \{-1,+3\}\\
+\textbf{Observations}: &  \\
+$[$invariant$]$ & \texttt{Face(P)} = \textbf{N} \textbf{implies} \texttt{Content(P,u,v)} = \texttt{Environment:CellContent(Envi(P),Col(P)+u,Row(P)+v)}  \\
+& \texttt{Face(P)} = \textbf{N} \textbf{implies}  \texttt{Nature(P,u,v)} = \texttt{Environment:CellNature(Envi(P),Col(P)+u,Row(P)+v)}  \\
+& \texttt{Face(P)} = \textbf{S} \textbf{implies} \texttt{Content(P,u,v)} = \texttt{Environment:CellContent(Envi(P),Col(P)-u,Row(P)-v)}  \\
+& \texttt{Face(P)} = \textbf{S} \textbf{implies}  \texttt{Nature(P,u,v)} = \texttt{Environment:CellNature(Envi(P),Col(P)-u,Row(P)-v)}  \\
+& \texttt{Face(P)} = \textbf{E} \textbf{implies} \texttt{Content(P,u,v)} = \texttt{Environment:CellContent(Envi(P),Col(P)+v,Row(P)-u)}  \\
+& \texttt{Face(P)} = \textbf{E} \textbf{implies}  \texttt{Nature(P,u,v)} = \texttt{Environment:CellNature(Envi(P),Col(P)+v,Row(P)-u)}  \\
+& \texttt{Face(P)} = \textbf{W} \textbf{implies} \texttt{Content(P,u,v)} = \texttt{Environment:CellContent(Envi(P),Col(P)-v,Row(P)+u)}  \\
+& \texttt{Face(P)} = \textbf{W} \textbf{implies}  \texttt{Nature(P,u,v)} = \texttt{Environment:CellNature(Envi(P),Col(P)-v,Row(P)+u)}  \\
+& \textbf{forall} u,v \textbf{in} [-1,1] $\times$ [-1,1], \textbf{not} \texttt{Viewable(P,u,v)} \\
+& \texttt{Viewable(P,-1,2)} = \texttt{Nature(P,-1,1)} $\notin$ \{\textbf{WALL}, \textbf{DWC}, \textbf{DNC} \}  \\
+& \texttt{Viewable(P,0,2)} = \texttt{Nature(P,0,1)} $\notin$ \{\textbf{WALL}, \textbf{DWC}, \textbf{DNC} \}  \\
+& \texttt{Viewable(P,1,2)} = \texttt{Nature(P,1,1)} $\notin$ \{\textbf{WALL}, \textbf{DWC}, \textbf{DNC} \}  \\
+& \texttt{Viewable(P,-1,3)} = \texttt{Nature(P,-1,2)} $\notin$ \{\textbf{WALL}, \textbf{DWC}, \textbf{DNC} \} \textbf{and} \texttt{Viewable(P,-1,2)} \\
+& \texttt{Viewable(P,0,3)} = \texttt{Nature(P,0,2)} $\notin$ \{\textbf{WALL}, \textbf{DWC}, \textbf{DNC} \} \textbf{and} \texttt{Viewable(P,0,2)} \\
+& \texttt{Viewable(P,1,3)} = \texttt{Nature(P,1,2)} $\notin$ \{\textbf{WALL}, \textbf{DWC}, \textbf{DNC} \} \textbf{and} \texttt{Viewable(P,1,2)} \\
+$[$step$]$: & \texttt{LastCom(P)=\textbf{FF}} \textbf{implies} \texttt{step(P)} = \texttt{Forward(P)} \\
+& \texttt{LastCom(P)=\textbf{BB}} \textbf{implies} \texttt{step(P)} = \texttt{Backward(P)} \\
+& \texttt{LastCom(P)=\textbf{LL}} \textbf{implies} \texttt{step(P)} = \texttt{StrafeLeft(P)} \\
+& \texttt{LastCom(P)=\textbf{RR}} \textbf{implies} \texttt{step(P)} = \texttt{StrafeRight(P)} \\
+& \texttt{LastCom(P)=\textbf{TL}} \textbf{implies} \texttt{step(P)} = \texttt{TurnLeft(P)} \\
+& \texttt{LastCom(P)=\textbf{TR}} \textbf{implies} \texttt{step(P)} = \texttt{TurnRight(P)} \\
+\end{tabular}
+
+\vspace{5mm}\hrule\vspace{5mm}
+
+\begin{tabular}{rl}
+\textbf{Service}: & Engine \\
+\textbf{Observator}: & \texttt{Envi}: \textrm{[Engine]} $\rightarrow$ \textrm{Environment} \\
+& \texttt{Entities}: \textrm{[Engine]} $\rightarrow$ \textrm{Array[Entity]} \\
+& \texttt{getEntity}: \textrm{[Engine]} $\times$ \textrm{int} $\rightarrow$ \textrm{Entity} \\
+\textbf{Constructor}: & \texttt{init}: \textrm{Environment} $\rightarrow$ \textrm{[Engine]}\\
+\textbf{Operator}: & \texttt{removeEntity}: \textrm{[Engine]} $\times$ \textrm{int} $\rightarrow$ \textrm{[Engine]} \\
+& \quad\quad\quad\quad \textbf{pre} \texttt{removeEntity(E,i)} \textbf{requires} $0 \leq$ \texttt{i} $<$ \texttt{size(Entities(E))} \\
+& \texttt{addEntity}: \textrm{[Engine]} $\times$ \textrm{Entity} $\rightarrow$ \textrm{[Engine]} \\
+& \texttt{step}: \textrm{[Engine]} $\rightarrow$ \textrm{[Engine]}\\
+& \quad\quad\quad\quad \textbf{pre} \texttt{step()} \textbf{requires} \textbf{forall} i \textbf{in} [0;\texttt{size(Entities(E))-1]}, \texttt{Entity::Hp(getEntity(E,i))>0} \\
+\textbf{Observations}: & \\
+$[$invariant$]$: & \textbf{forall} i \textbf{in} [0;\texttt{size(Entities(E))-1]}, \texttt{Entity::Envi(getEntity(E,i))=Envi(E)} \\
+& \textbf{forall} i \textbf{in} [0;\texttt{size(Entities(E))-1]}, \texttt{Entity::Col(getEntity(E,i))=x} \\ & \quad\quad\quad\quad\textbf{and} \texttt{Entity::Row(getEntity(E,i))=y} \\
+& \quad\quad\quad\quad \textbf{implies} \texttt{Environment::CellContent(Envi(E),x,y)} = \texttt{getEntity(E,i)}  \\
+$[$removeEntity$]$: & \texttt{size(Entities(removeEntity(E,i)))} = \texttt{size(Entities(E))} - 1 \\
+& \textbf{forall} k \textbf{in} [0,i-1], \texttt{getEntity(removeEntity(E,i),k))} = \texttt{getEntity(E,k)} \\
+& \textbf{forall} k \textbf{in} [i,\texttt{size(Entities(E))-2}], \texttt{getEntity(removeEntity(E,i),k))} = \texttt{getEntity(E,k+1)} \\
+$[$addEntity$]$: & \texttt{size(Entities(addEntity(E,e)))} = \texttt{size(Entities(E))} + 1 \\
+& \textbf{forall} k \textbf{in} [0,\texttt{size(Entities(E))-1}], \texttt{getEntity(addEntity(E,e),k))} = \texttt{getEntity(E,k)} \\
+& \texttt{getEntity(addEntity(E,e),size(Entities(E)))} = e
+\end{tabular}
+
+\vspace{5mm}
+
+\noindent En cherchant une observation pour \texttt{step} on peut être tenté d'écrire:
+
+\noindent\textbf{forall} i \textbf{in} \texttt{size(Entities(E))},
+\texttt{getEntity(step(E),i)} = \texttt{Entity::step(getEntity())}
+
+\noindent Mais cette observation ne serait pertinente que si les
+méthodes \texttt{step} des différentes entités étaient indépendantes
+les unes des autres. Mais ce n'est pas le cas (les déplacements sont
+dépendants de l'ordre des entités, plus tard on ajoutera le combat).
+
+\end{document}

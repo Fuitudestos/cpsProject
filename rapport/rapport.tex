@@ -1,0 +1,425 @@
+\documentclass[12pt]{report}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{layout}
+\usepackage[colorlinks=true,breaklinks=true,linkcolor=black,urlcolor=black,citecolor=black]{hyperref}
+\usepackage{graphicx}
+
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\begin{titlepage}
+  \begin{sffamily}
+  \begin{center}
+
+    \includegraphics[scale=0.7]{image/univ.png}~\\[1.5cm]
+
+    \textsc{\Large Rapport de projet CPS}\\[1.5cm]
+
+    \HRule \\[0.4cm]
+    { \huge \bfseries Spécification formelle et implémentation du jeu Dungeon Master\\[0.4cm] }
+
+    \HRule \\[1.5cm]
+    \\[1.5cm]
+
+    \begin{minipage}{0.4\textwidth}
+      \begin{flushleft} \large
+        Paul \textsc{Charton}\\
+      \end{flushleft}
+    \end{minipage}
+
+    \vfill
+
+    {\large 29 Mai 2018}
+
+  \end{center}
+  \end{sffamily}
+\end{titlepage}
+
+\tableofcontents
+
+\chapter*{Introduction}
+
+Lors de ce rapport, je vais vous présenter toutes les spécifications et implémentaion que j'ai effectué tout au long de ce projet.
+J'expliquerais avec un détails particulier les spécification que j'ai moi-même ajoute a ce jeu et à l'ensemble de spécification déjà existante.
+
+Je vais commencer lors de cette introduction a lister les éléments que j'ai ajouter, vous les retrouverez en détails plus tard dans ce rapport.
+
+Malheuresement suite a un manque de temps et mauvaise organisation, le rapport que vous allez lire, la spécification associé ainsi que l'implementation peuvent être incomplete et comporter des erreurs.
+
+\chapter{Ma contribution}
+
+\section{"Chest" et son contenu}
+
+L'une de mes premieres volonté à été d'ajouter un service "Chest", cela pour renforcer le l'aspect "Porte-Monstre-Trésor" que je voulais donné à ce jeu.
+Le service étant le plus proche de ce concept a été "Mob", mais il ne me convenait pas car ceux-ci peuvent bouger.
+J'ai donc commencé par crée un service "MotionlessObject" qui reprend les même caractéristique que celle de "Mob" mais en enlevant la possibilité de bouger l'objet.
+J'en ai également profiter pour faire hériter "Mob" de ce service.
+On a maintenant un objet immobile a la base.
+Puis on rend cette objet mobile a l'aide de "Mob".
+Et enfin on ajoute la vie avec "Entity". Tout cela avec des lien d'héritage.
+J'ai ensuite rajouter les méthodes "Loot" et "Destroy" à "MotionlessObject".
+En symmetrie j'ai ajouter les méthode "takeObject" et "attack" réspectivement aux service "Player" et aux service "Entity", pour permettre a ces objet d'intéragir.
+"takeObject" n'aura d'effet que sur "Chest" et "MotionlessObject", cela activera leur méthode "Loot".
+Cette méthode "Loot" aura pour effet de choisir un service "LootObject" parmi une liste et de l'ajouter dans l'inventaire du joueur à l'aide de la méthode "addLoot".
+
+La méthode "attack" quand à elle aura un effet sur tout ce groupe de service.
+Sur le service "MotionlessObject", "attack" déclenchera directement la méthode "destroy", de même pour le service "Mob".
+Par contre à partir de entity, la méthode "attack" déclenchera la méthode "getDamage", qui va permettre de faire diminuer les points de vie de l'objet qui se fait attaquer.
+
+\section{Un nouveau monstre}
+
+La création du service "Chest" est lié a une autre envie.
+Celle de re-crée le Mimic de Dark Souls.
+En effet, ce monstre est différent des autres de par sa manieres d'agir.
+Au lieu de courir aprés le Joueur, il va simplement l'attendre.
+Cela en fait donc un monstre immobile.
+C'est pour cette raison que je le fais hériter directement du service "MotionlessObject".
+A la difference que quand le Joueur appelera la méthode "loot" d'un mimic, il aura une petite surprise.
+
+\section{Les potions}
+
+Encore un concept que j'ai repris de Dark Souls.
+Tout au long de l'aventure, soit en ouvrant des coffres, soit en tuant des mimics, on peut trouver des potions.
+Mais plus que de simple comsomable, ce sont des contenant, que l'on boire et remplir a volonté.
+
+\section{La taille}
+
+J'ai voulu, dans ma version de Dungeon Master, donner une importance a la taille du joueur par rapport a celle des monstres.
+En effet, le joueur va pouvoir équiper trois pieces d'armures différentes; un casque, un torse et des jambieres.
+Le rapport de taille entre le montre et le joueur décidera de quelle sera la piece d'armure sera comtabiliser dans la réduction des dégats.
+Il est toutefois important de bien s'équiper, toutes les pieces d'armures augmentant les points de vies maximum.
+
+\section{Ce que j'aurais voulu faire}
+
+Avec plus de temps j'aurais implementer ou fini d'implementer d'autre idées parmi celles-ci :
+\begin{description}
+    \item[Ambidextrie] : On peut taper les trois cases devant soi, mais les dégats dépendent de l'arme de la main associé.
+    \item[Fontaine de Vie] : Principalement pour remplir les potions.
+    \item[Porte invisible] : Simplement des racourcie avec potentiellement trésors ou mimic bonus.
+\end{description}
+
+\chapter{Spécification formelle}
+
+\section{Les type utilisée}
+
+\begin{tabular}{rl}
+    \textbf{type} & \textrm{Cell} \{\textbf{IN}, \textbf{OUT}, \textbf{EMP}, \textbf{WLL}, \textbf{DNO}, \textbf{DNC}, \textbf{DWO}, \textbf{DWC} \} \\
+    \textbf{type} & \textrm{Dir} \{\textbf{N}, \textbf{S}, \textbf{W}, \textbf{E} \} \\
+    \textbf{type} & \textrm{Command} \{\textbf{FF}, \textbf{BB}, \textbf{RR}, \textbf{LL}, \textbf{TL}, \textbf{TR}, \textbf{AA}, \textbf{TK}\} \\
+    \textbf{type} & \textrm{ArmorSet} \{\textbf{MIMIC}, \textbf{CHEST}, \textbf{SKELETON} \} \\
+    \textbf{type} & \textrm{Set[T]}  \\
+    \textbf{type} & \textrm{Array[T1,...,TN]}  \\
+\end{tabular}
+
+\section{LootObjectService}
+
+\begin{tabular}{rl}
+    \textbf{Service} : & LootObject
+\end{tabular}
+
+\section{ArmorPieceService}
+
+\begin{tabular}{rl}
+    \textbf{Service} : & ArmorPiece \textbf{includes} LootObject \\
+
+    \textbf{Types} : & \textrm{String}, \textrm{ArmorSet}, \textrm{int} \\
+
+    \textbf{Observator} : & \textbf{const}~\texttt{getName} : \textrm{[ArmorPiece]} $\rightarrow$ \textrm{String} \\
+    & \textbf{const}~\texttt{getArmoSet} : \textrm{[ArmorPiece]} $\rightarrow$ \textrm{ArmorSet} \\
+    & \textbf{const}~\texttt{getArmor} : \textrm{[ArmorPiece]} $\rightarrow$ \textrm{int} \\
+    & \textbf{const}~\texttt{getHP} : \textrm{[ArmorPiece]} $\rightarrow$ \textrm{int} \\
+
+    \textbf{Constructors} : & \texttt{init} : \textrm{String} $\cdot$ \textrm{ArmorSet} $\cdot$ \textrm{int} $\cdot$ \textrm{int} $\rightarrow$ \textrm{[ArmorPiece]} \\
+    & \quad\quad \textbf{pre}~\texttt{init(n,s,a,hp)}~\textbf{requires}~$0 \leq$ a ~\textbf{and}~ $0 \leq$ hp  \\
+
+    \textbf{Observation} : \\
+    $[$invariant$]$: & $\top$ \\
+    $[$init$]$ : & \texttt{getName(init(n,s,a,hp))} = \texttt{n} \\
+    & \texttt{getArmorSet(init(n,s,a,hp))} = \texttt{s} \\
+    & \texttt{getArmor(init(n,s,a,hp))} = \texttt{a} \\
+    & \texttt{getHP(init(n,s,a,hp))} = \texttt{hp} \\
+\end{tabular}
+
+\section{WeaponService}
+
+\begin{tabular}{rl}
+    \textbf{Service} : & Weapon \textbf{includes} LootObject \\
+
+    \textbf{Types} : & \textrm{String}, \textrm{ArmorSet}, \textrm{int} \\
+
+    \textbf{Observator} : & \textbf{const}~\texttt{getName} : \textrm{[Weapon]} $\rightarrow$ \textrm{String} \\
+    & \textbf{const}~\texttt{getArmoSet} : \textrm{[Weapon]} $\rightarrow$ \textrm{ArmorSet} \\
+    & \textbf{const}~\texttt{getArmor} : \textrm{[Weapon]} $\rightarrow$ \textrm{int} \\
+    & \textbf{const}~\texttt{getHP} : \textrm{[Weapon]} $\rightarrow$ \textrm{int} \\
+
+    \textbf{Constructors} : & \texttt{init} : \textrm{String} $\cdot$ \textrm{ArmorSet} $\cdot$ \textrm{int} $\cdot$ \textrm{int} $\rightarrow$ \textrm{[Weapon]} \\
+    & \quad\quad \textbf{pre}~\texttt{init(n,s,a,hp)}~\textbf{requires}~$0 \leq$ a ~\textbf{and}~ $0 \leq$ hp  \\
+
+    \textbf{Observation} : \\
+    $[$invariant$]$: & $\top$ \\
+    $[$init$]$ : & \texttt{getName(init(n,s,a,hp))} = \texttt{n} \\
+    & \texttt{getArmorSet(init(n,s,a,hp))} = \texttt{s} \\
+    & \texttt{getArmor(init(n,s,a,hp))} = \texttt{a} \\
+    & \texttt{getHP(init(n,s,a,hp))} = \texttt{hp} \\
+
+\end{tabular}
+
+\section{PotionService}
+
+\begin{tabular}{rl}
+
+\textbf{Service} : & Potion \textbf{includes} LootObject \\
+
+\textbf{Types} : & \textrm{boolean} \\
+
+\textbf{Observator} : & \texttt{isFull} : \textrm{[Potion]} $\rightarrow$ \textrm{boolean} \\
+
+\textbf{Constructors} : & \texttt{init} : \textrm{void} $\rightarrow$ \textrm{[Potion]} \\
+
+\textbf{Operators} : & \texttt{getDrinked} : \textrm{[Potion]} $\rightarrow$ \textrm{[Potion]} \\
+& \quad\quad \textbf{pre}~\texttt{getDrinked(P)}~\textbf{requires}~\texttt{isFull(p)} = $\top$ \\
+& \texttt{getFilled} : \textrm{[Potion]} $\rightarrow$ \textrm{[Potion]} \\
+
+\textbf{Observation} : \\
+$[$invariant$]$ : & isFull(getFilled(P)) = $\top$ \\
+$[$init$]$ : & isFull(init()) = $\bot$
+$[$getDrinked$]$ : & isFull(getDrinked(P)) = $\bot$ \\
+$[$getFilled$]$ : & isFull(P) = $\top$ \textbf{implies} isFull(getFilled(P)) = $\top$ \\
+& isFull(P) = $\bot$ \textbf{implies} isFull(getFilled(P)) = $\top$ \\
+
+\end{tabular}
+
+\section{MotionlessObjectService}
+
+\begin{tabular}{rl}
+
+\textbf{Service} : & MotionlessObject \\
+
+\textbf{Types} : & \textrm{Environment}, \textrm{int}, \textrm{Dir} \\
+
+\textbf{Observator} : & \texttt{getEnvironment} : \textrm{[MotionlessObject]} $\rightarrow$ \textrm{Environment} \\
+& \textbf{const}~\texttt{getCol} : \textrm{[MotionlessObject]} $\rightarrow$ \textrm{int} \\
+& \textbf{const}~\texttt{getRow} : \textrm{[MotionlessObjectt]} $\rightarrow$ \textrm{int} \\
+& \textbf{const}~\texttt{getDir} : \textrm{[MotionlessObject]} $\rightarrow$ \textrm{Dir} \\
+
+\textbf{Constructors} : & \texttt{init} : \textrm{Environment} $\cdot$ \textrm{int} $\cdot$ \textrm{int} $\cdot$ \textrm{Dir} $\rightarrow$ \textrm{[MotionlessObject]} \\
+& \textbf{pre} \texttt{init(E,x,y,D)} \textbf{requires} $0 \leq$ \texttt{x} $<$ \texttt{Environment::Width(E)} \\
+& \quad\quad\quad\quad \textbf{and} $0 \leq$ \texttt{y} $<$ \texttt{Environment::Height(E)} \\
+
+\textbf{Operators} : & \texttt{Loot} : \textrm{[MotionlessObject]} $\rightarrow$ \textrm{[MotionlessObject]} \\
+& \quad\quad \textbf{pre}~getDir(M) = N \textbf{implies} \\
+& getCellContent(getEnvironment(M), getRow(M) + 1, getCol(M)) \\
+& = PlayerService \textbf{and} getDir(P) = S \\
+& \quad\quad \textbf{pre}~getDir(M) = S \textbf{implies} \\
+& getCellContent(getEnvironment(M), getRow(M) - 1, getCol(M)) \\
+& = PlayerService \textbf{and} getDir(P) = N \\
+& \quad\quad \textbf{pre}~getDir(M) = E \textbf{implies} \\
+& getCellContent(getEnvironment(M), getRow(M), getCol(M) + 1) \\
+& = PlayerService \textbf{and} getDir(P) = W \\
+& \quad\quad \textbf{pre}~getDir(M) = W \textbf{implies} \\
+& getCellContent(getEnvironment(M), getRow(M), getCol(M) - 1) \\
+& = PlayerService \textbf{and} getDir(P) = E \\
+\\
+& \texttt{Destroy} : \textrm{[MotionlessObject]} $\rightarrow$ \textrm{[MotionlessObject]} \\
+& \quad\quad \textbf{pre}~getDir(M) = N \textbf{implies} \\
+& getCellContent(getEnvironment(M), getRow(M) + 1, getCol(M)) \\
+& = PlayerService \textbf{and} getDir(P) = S \\
+& \quad\quad \textbf{pre}~getDir(M) = S \textbf{implies} \\
+& getCellContent(getEnvironment(M), getRow(M) - 1, getCol(M)) \\
+& = PlayerService \textbf{and} getDir(P) = N \\
+& \quad\quad \textbf{pre}~getDir(M) = E \textbf{implies} \\
+& getCellContent(getEnvironment(M), getRow(M), getCol(M) + 1) \\
+& = PlayerService \textbf{and} getDir(P) = W \\
+& \quad\quad \textbf{pre}~getDir(M) = W \textbf{implies} \\
+& getCellContent(getEnvironment(M), getRow(M), getCol(M) - 1) \\
+& = PlayerService \textbf{and} getDir(P) = E
+
+\end{tabular}
+
+\begin{tabular}{rl}
+
+\textbf{Observation} : \\
+$[$invariant$]$ : & $0 \leq$ \texttt{Col(M)} $<$ \texttt{Environment::Width(Envi(M))} \\
+& $0 \leq$ \texttt{Row(M)} $<$ \texttt{Environment::Height(Envi(M))} \\
+& Environment::CellNature(Envi(M),Col(M),Row(M)) $\notin$ \\
+& \{\textbf{WLL}, \textbf{DNC},  \textbf{DWC}\} \\
+$[$init$]$ : & \texttt{Col(init(E,x,y,D))} = \texttt{x} \\
+& \texttt{Row(init(E,x,y,D))} = \texttt{y} \\
+& \texttt{Face(init(E,x,y,D))} = \texttt{D} \\
+& \texttt{Envi(init(E,x,y,D))} = \texttt{E} \\
+
+\end{tabular}
+
+\section{MimicService}
+
+\begin{tabular}{rl}
+
+\textbf{Service} : & Mimic \textbf{includes} MotionlessObject \\
+
+\textbf{Observator} : & \texttt{getHP} : \textrm{[Mimic]} $\rightarrow$ \textrm{int} \\
+& \textbf{const}~\texttt{getHeight} : \textrm{[Mimic]} $\rightarrow$ \textrm{int} \\
+& \texttt{isAwake} : \textrm{[Mimic]} $\rightarrow$ \textrm{boolean} \\
+
+\textbf{Constructors} : & \texttt{init} : \textrm{Environment} $\cdot$ \textrm{int} $\cdot$ \textrm{int} $\cdot$ \textrm{Dir} $\rightarrow$ \textrm{[Mimic]} \\
+& \textbf{pre} \texttt{init(E,x,y,D)} \textbf{requires} $0 \leq$ \texttt{x} $<$ \texttt{Environment::Width(E)} \\
+& \quad\quad\quad\quad \textbf{and} $0 \leq$ \texttt{y} $<$ \texttt{Environment::Height(E)} \\
+
+\textbf{Operators} : & \texttt{attack} : \textrm{[Mimic]} $\rightarrow$ \textrm{[Mimic]} \\
+& \texttt{getDamage} : \textrm{[Mimic]} $\cdot$ \textrm{int} $\rightarrow$ \textrm{[Mimic]} \\
+& \quad\quad \textbf{pre} getHP(M) > 0
+
+\textbf{Observation} : \\
+$[$invariant$]$ : & attack(M) \textbf{implies} isAwake(M) = $\top$ \\
+$[$init$]$ : & isAwake(init(E,x,y,D)) = $\bot$ \\
+$[$getDamage$]$ : & getHP(getDamage(M,x)) = getHP(M) - x \\
+
+\end{tabular}
+
+\section{MobService}
+
+\begin{tabular}{rl}
+
+\textbf{Service} : & Mob \textbf{includes} MotionlessObject \\
+
+\textbf{Operators} : & \texttt{forward} : \textrm{[Mob]} $\rightarrow$ \textrm{[Mob]} \\
+& \texttt{backward} : \textrm{[Mob]} $\rightarrow$ \textrm{[Mob]} \\
+& \texttt{turnLeft} : \textrm{[Mob]} $\rightarrow$ \textrm{[Mob]} \\
+& \texttt{turnRight} : \textrm{[Mob]} $\rightarrow$ \textrm{[Mob]} \\
+& \texttt{strafeLeft} : \textrm{[Mob]} $\rightarrow$ \textrm{[Mob]} \\
+& \texttt{strafeRight} : \textrm{[Mob]} $\rightarrow$ \textrm{[Mob]} \\
+
+\textbf{Observations} : \\
+$[$invariant$]$ : & $0 \leq$ \texttt{Col(M)} $<$ \texttt{Environment::Width(Envi(M))} \\
+& $0 \leq$ \texttt{Row(M)} $<$ \texttt{Environment::Height(Envi(M))} \\
+& Environment::CellNature(Envi(M),Col(M),Row(M)) $\notin$ \\
+& \{\textbf{WLL}, \textbf{DNC},  \textbf{DWC}\} \\
+
+$[$Forward$]$: & \texttt{Face(M)}=\textbf{N} \textbf{implies} \\
+& \texttt{Environment::CellNature(Envi(M),Col(M),Row(M)+1)} $\in$ \{\textbf{EMP}, \textbf{DWO}\} \\
+& \textbf{and} \texttt{Row(M)+1} $<$ \texttt{Environment::Width(Envi(M))} \\
+& \textbf{and} \texttt{Environment::CellContent(Envi(M),Col(M),Row(M)+1)} = \textbf{No} \\
+& \textbf{implies} \texttt{Row(Forward(M))} = \texttt{Row(M) + 1} \\
+& \textbf{and} \texttt{Col(Forward(M))} = \texttt{Col(M)} \\
+& \texttt{Face(M)}=\textbf{N} \textbf{implies} \\
+& \texttt{Environment::CellNature(Envi(M),Col(M),Row(M)+1)} $\notin$ \{\textbf{EMP}, \textbf{DWO}\} \\
+& \textbf{or} \texttt{Row(M)+1} $\geq$ \texttt{Environment::Width(Envi(M))} \\
+& \textbf{or} \texttt{Environment::CellContent(Envi(M),Col(M),Row(M)+1)} $\neq$ \textbf{No} \\
+& \textbf{implies} \texttt{Row(Forward(M))} = \texttt{Row(M)} \\
+& \textbf{and} \texttt{Col(Forward(M))} = \texttt{Col(M)} \\
+& \texttt{Face(M)}=\textbf{E} \textbf{implies} \\
+& \texttt{Environment::CellNature(Envi(M),Col(M)+1,Row(M))} $\in$ \{\textbf{EMP}, \textbf{DNO}\} \\
+& \textbf{and} \texttt{Col(M)+1} $<$ \texttt{Environment::Height(Envi(M))} \\
+& \textbf{and} \texttt{Environment::CellContent(Envi(M),Col(M)+1,Row(M))} = \textbf{No} \\
+& \textbf{implies} \texttt{Row(Forward(M))} = \texttt{Row(M)} \\
+& \textbf{and} \texttt{Col(Forward(M))} = \texttt{Col(M) + 1} \\
+& \texttt{Face(M)}=\textbf{E} \textbf{implies} \\
+& \texttt{Environment::CellNature(Envi(M),Col(M)+1,Row(M))} $\notin$ \{\textbf{EMP}, \textbf{DWO}\} \\
+& \textbf{or} \texttt{Row(M)} $\geq$ \texttt{Environment::Width(Envi(M))} \\
+& \textbf{or} \texttt{Environment::CellContent(Envi(M),Col(M)+1,Row(M))} $\neq$ \textbf{No} \\
+& \textbf{implies} \texttt{Row(Forward(M))} = \texttt{Row(M)} \\
+& \textbf{and} \texttt{Col(Forward(M))} = \texttt{Col(M)}
+
+\end{tabular}
+
+\begin{tabular}{rl}
+
+&\texttt{Face(M)}=\textbf{S} \textbf{implies} \\
+& \texttt{Environment::CellNature(Envi(M),Col(M),Row(M)-1)} $\in$ \{\textbf{EMP}, \textbf{DWO}\} \\
+& \textbf{and} \texttt{Col(M)-1} $\geq$ 0 \\
+& \textbf{and} \texttt{Environment::CellContent(Envi(M),Col(M),Row(M)+1)} = \textbf{No} \\
+& \textbf{implies} \texttt{Row(Forward(M))} = \texttt{Row(M) - 1} \\
+& \textbf{and} \texttt{Col(Forward(M))} = \texttt{Col(M)} \\
+& \texttt{Face(M)}=\textbf{S} \textbf{implies} \\
+& \texttt{Environment::CellNature(Envi(M),Col(M),Row(M)-1)} $\notin$ \{\textbf{EMP}, \textbf{DWO}\} \\
+& \textbf{or} \texttt{Col(M)-1} $<$ 0 \\
+& \textbf{or} \texttt{Environment::CellContent(Envi(M),Col(M),Row(M)-1)} $\neq$ \textbf{No} \\
+& \textbf{implies} \texttt{Row(Forward(M))} = \texttt{Row(M)} \\
+& \textbf{and} \texttt{Col(Forward(M))} = \texttt{Col(M)} \\
+& \texttt{Face(M)}=\textbf{W} \textbf{implies} \\
+& \texttt{Environment::CellNature(Envi(M),Col(M)-1,Row(M))} $\in$ \{\textbf{EMP}, \textbf{DNO}\} \\
+& \textbf{and} \texttt{Row(M)-1} $\geq$ 0 \\
+& \textbf{and} \texttt{Environment::CellContent(Envi(M),Col(M)-1,Row(M))} = \textbf{No} \\
+& \textbf{implies} \texttt{Row(Forward(M))} = \texttt{Row(M)} \\
+& \textbf{and} \texttt{Col(Forward(M))} = \texttt{Col(M) - 1} \\
+& \texttt{Face(M)}=\textbf{W} \textbf{implies} \\
+& \texttt{Environment::CellNature(Envi(M),Col(M)-1,Row(M))} $\notin$ \{\textbf{EMP}, \textbf{DNO}\} \\
+& \textbf{or} \texttt{Row(M)-1} $<$ 0 \\
+& \textbf{or} \texttt{Environment::CellContent(Envi(M),Col(M),Row(M)-1)} $\neq$ \textbf{No} \\
+& \textbf{implies} \texttt{Row(Forward(M))} = \texttt{Row(M)} \\
+& \textbf{and} \texttt{Col(Forward(M))} = \texttt{Col(M)} \\
+\end{tabular}
+
+de même pour les autres fonctions.
+
+\section{EntityService}
+
+\begin{tabular}{rl}
+
+\textbf{Service} : & Entity \textbf{includes} Mob \\
+
+\textbf{Observator} : & \texttt{getHP} : \textrm{[Entity]} $\rightarrow$ \textrm{int} \\
+& \textbf{const}~\texttt{getHeight} : \textrm{[Entity]} $\rightarrow$ \textrm{int} \\
+
+\textbf{Constructors} : & \texttt{init} : \textrm{Environment} $\cdot$ \textrm{int} $\cdot$ \textrm{int} $\cdot$ \textrm{Dir} $\cdot$ \textrm{int} $\cdot$ \textrm{int} $\rightarrow$ \textrm{[Entity]} \\
+& \textbf{pre} \texttt{init(E,x,y,D, hp, h)} \textbf{requires} $0 \leq$ \texttt{x} $<$ \texttt{Environment::Width(E)} \\
+& \quad\quad\quad\quad \textbf{and} $0 \leq$ \texttt{y} $<$ \texttt{Environment::Height(E)} \\
+& \quad\quad\quad\quad \textbf{and} hp > 0 \\
+& \quad\quad\quad\quad \textbf{and} h > 0 \\
+
+\textbf{Operators} : & \texttt{attack} : \textrm{[Entity]} $\rightarrow$ \textrm{[Entity]} \\
+& \texttt{getDamage} : \textrm{[Entity]} $\cdot$ \textrm{int} $\rightarrow$ \textrm{[Entity]} \\
+& \quad\quad \textbf{pre} getHP(E) > 0 \\
+& \texttt{step} : \textrm{[Entity]} $\rightarrow$ \textrm{[Entity]} \\
+
+\textbf{Observation} : \\
+$[$init$]$ : & getHP(init(E,x,y,D,hp,h)) = hp \\
+& getHeight(init(E,x,y,D,hp,h)) = h \\
+$[$getDamage$]$ : & getHP(getDamage(E,x)) = getHP(E) - x \\
+
+\end{tabular}
+
+\section{Player}
+
+\begin{tabular}{rl}
+
+\textbf{Service} : & Player \textbf{includes} Entity \\
+
+\textbf{Observator}: & \texttt{LastCom}: \textrm{[Player]} $\rightarrow$ \textrm{Option[Command]} \\
+& \texttt{Content}: \textrm{[Player]} $\cdot$ \textrm{int} $\cdot$ \textrm{int} $\rightarrow$ \textrm{Option[Mob]} \\
+& \quad\quad\quad\quad\textbf{pre} \texttt{Content(P,x,y)} \textbf{requires} x $\in$ \{-1,0,1\}\textbf{and} y $\in$ \{-1,+3\}\\
+& \texttt{Nature}: \textrm{[Player]} $\cdot$ \textrm{int} $\cdot$ \textrm{int} $\rightarrow$ \textrm{Cell} \\
+& \quad\quad\quad\quad\textbf{pre} \texttt{Nature(P,x,y)} \textbf{requires} x $\in$ \{-1,0,1\}\textbf{and} y $\in$ \{-1,+3\}\\
+& \texttt{Viewable}: \textrm{[Player]} $\cdot$ \textrm{int} $\cdot$ \textrm{int} $\rightarrow$ \textrm{Cell} \\
+& \quad\quad\quad\quad\textbf{pre} \texttt{Nature(P,x,y)} \textbf{requires} x $\in$ \{-1,0,1\}\textbf{and} y $\in$ \{-1,+3\}\\
+
+& \texttt{getNbPotion} \textrm{[Player]} $\rightarrow$ \textrm{int} \\
+& \texttt{getHelm} \textrm{[Player]} $\rightarrow$ \textrm{ArmorPiece} \\
+& \texttt{getChest} \textrm{[Player]} $\rightarrow$ \textrm{ArmorPiece} \\
+& \texttt{getLeg} \textrm{[Player]} $\rightarrow$ \textrm{ArmorPiece} \\
+& \texttt{getRightHand} \textrm{[Player]} $\rightarrow$ \textrm{Weapon} \\
+& \texttt{getLeftHand} \textrm{[Player]} $\rightarrow$ \textrm{Weapon} \\
+
+\textbf{Operator} & \texttt{setLastCommand} \textrm{[Player]} $\cdot$ \textrm{Command} $\rightarrow$ \textrm{[Player]} \\
+&\texttt{addLoot} \textrm{[Player]} $\cdot$ \textrm{LootObject} $\rightarrow$ \textrm{[Player]} \\
+&\texttt{takeObject} \textrm{[Player]} $\rightarrow$ \textrm{[Player]} \\
+&\texttt{drinkPotion} \textrm{[Player]} $\rightarrow$ \textrm{[Player]} \\
+
+&\texttt{equipHelm} \textrm{[Player]} $\cdot$ \textrm{Helms} $\rightarrow$ \textrm{[Player]} \\
+&\texttt{equipChest} \textrm{[Player]} $\cdot$ \textrm{ChestArmor} $\rightarrow$ \textrm{[Player]} \\
+&\texttt{equipHelm} \textrm{[Player]} $\cdot$ \textrm{LegArmor} $\rightarrow$ \textrm{[Player]} \\
+&\texttt{equipRightHand} \textrm{[Player]} $\cdot$ \textrm{Weapon} $\rightarrow$ \textrm{[Player]} \\
+&\texttt{equipLeftHand} \textrm{[Player]} $\cdot$ \textrm{Weapon} $\rightarrow$ \textrm{[Player]} \\
+
+&\texttt{unequipHelm} \textrm{[Player]} $\rightarrow$ \textrm{[Player]} \\
+&\texttt{unequipChest} \textrm{[Player]} $\rightarrow$ \textrm{[Player]} \\
+&\texttt{unequipLeg} \textrm{[Player]} $\rightarrow$ \textrm{[Player]} \\
+&\texttt{unequipRightHand} \textrm{[Player]} $\rightarrow$ \textrm{[Player]} \\
+&\texttt{unequipLeftHand} \textrm{[Player]} $\rightarrow$ \textrm{[Player]} \\
+
+\end{tabular}
+
+
+\end{document}
